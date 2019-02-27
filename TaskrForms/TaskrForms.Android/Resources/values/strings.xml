@@ -1,0 +1,24 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+<resources>   
+    <!-- Authentication -->
+    <string name="err_auth">Authentication error: %s</string>
+    <string name="auth_out_success">Successfully signed out</string>
+  
+    <!-- Save Functionality -->
+    <string name="save_success">Saved your tasks to %s</string>
+    <string name="onedrive_allowed">Saving to OneDrive is allowed</string>
+    <string name="open_file_failure">Cannot open saved file. No app available on device.</string>
+
+    <!-- Print Functionality -->
+    <string name="print_name">Taskr Document</string>
+    <string name="print_failure">Could not create print job</string>
+  
+    <!-- MAM Policy -->
+    <string name="err_blocked">You are blocked, please do not proceed! Reason: %s</string>
+    <string name="err_not_allowed">Your IT administrator has disabled this action</string>
+  
+    <!-- Application Configuration -->
+    <string name="about_nav_config_text">Your Intune application configuration is: %s</string>
+    <string name="about_nav_config_text_missing">Your application configuration JSON is not set.</string>
+</resources>

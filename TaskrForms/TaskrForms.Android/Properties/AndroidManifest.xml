@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.microsoft.intune.taskr.xamarin">
+    <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="28" />
+
+    <!-- Required permissions -->
+    <!-- Required for Broker usage with ADAL -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <!-- Required for printing from the application. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Required for saving to the device. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  
+    <application android:label="TaskrForms.Android"
+      android:allowBackup="true"
+      android:fullBackupOnly="true"
+      android:fullBackupContent="true"
+      android:backupAgent="com.microsoft.intune.mam.client.app.backup.MAMDefaultBackupAgent" >
+      <!-- Required to prevent multiple prompts for sign in -->
+      <!-- Replace {your_aad_client_id} with Application ID registered in the Azure Active Directory portal -->
+      <meta-data android:name="com.microsoft.intune.mam.aad.ClientID" android:value="{your_aad_client_id}" />
+
+      <!-- File provider for saving the CSV file of the current tasks. -->
+      <provider
+        android:authorities="TaskrForms.Droid.CustomFileProvider"
+        android:name="android.support.v4.content.FileProvider"
+        android:grantUriPermissions="true"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/provider_paths" />
+      </provider>
+    </application>
+</manifest>

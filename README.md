@@ -1,6 +1,4 @@
 # Taskr - A [Microsoft Intune](https://www.microsoft.com/en-us/cloud-platform/microsoft-intune) Xamarin SDK Example
-Simple, open source, sample apps on Xamarin.Android and Xamarin.Forms. They are designed to let you test out the capabilities of the Microsoft Intune Xamarin Bindings. 
-
 This repository is a demonstration of the [Microsoft Intune App SDK](https://docs.microsoft.com/en-us/intune/app-sdk) with Xamarin for Android. A developer guide to the SDK is available [here](https://docs.microsoft.com/en-us/intune/app-sdk-xamarin). Both sample apps, basic Xamarin.Android and Xamarin.Forms, implement commonly used features so developers making their own apps have an example to follow. IT administrators who want to create apps with similar functionality can even use these apps as a template.
 
 Taskr allows users to keep a list of to-do items, or tasks. Users can view their open tasks and mark tasks as complete, print them, or save them to their phone. Tasks are kept in a database implemented using [SQLite](https://docs.microsoft.com/en-us/xamarin/android/data-cloud/data-access/using-sqlite-orm). Users' actions are managed by policy, so not all actions may be available.
