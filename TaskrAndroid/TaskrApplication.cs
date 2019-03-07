@@ -13,7 +13,18 @@ using TaskrAndroid.Utils;
 
 namespace TaskrAndroid
 {
+    /// <summary>
+    /// The Taskr application.
+    /// </summary>
+#if DEBUG
+    /// <remarks>
+    /// Due to an issue with debugging the Xamarin bound MAM SDK the Debuggable = false attribute must be added to the Application in order to enable debugging.
+    /// Without this attribute the application will crash when launched in Debug mode. Additional investigation is being performed to identify the root cause.
+    /// </remarks>
+    [Application(Debuggable = false)]
+#else
     [Application]
+#endif
     class TaskrApplication : MAMApplication
     {
         public TaskrApplication(IntPtr handle, Android.Runtime.JniHandleOwnership transfer)

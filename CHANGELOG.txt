@@ -1,3 +1,7 @@
+Version 1.2
+-------------
+* A known issue with the Xamarin bound MAM SDK would cause the application to crash when deployed in Debug mode. This change provides a workaround for that issue by adding an application attribute that enables the application to be debugged without it crashing.
+
 Version 1.1
 -------------
 * Ensure application authentication values are properly configured before attempting authentication to aide in development and prevent application crashes.
