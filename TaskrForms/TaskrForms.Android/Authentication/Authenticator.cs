@@ -18,31 +18,42 @@ using Xamarin.Forms;
 [assembly: Xamarin.Forms.Dependency(typeof(Authenticator))]
 namespace TaskrForms.Droid.Authentication
 {
+    /// <summary>
+    /// Manages authentication for the app.
+    /// 
+    /// Deals with both ADAL and MAM, significantly.
+    /// </summary>
     class Authenticator : IAuthenticator
     {
+        private const string _placeholderClientID = "<placeholder_aad_client_id>";
+        private const string _placeholderRedirectURI = "<placeholder_redirect_uri>";
+
         /// <summary>
         /// The authority for the ADAL AuthenticationContext. Sign in will use this URL.
         /// </summary>
-        public const string _authority = "https://login.microsoftonline.com/common";
+        private const string _authority = "https://login.microsoftonline.com/common";
 
         /// <summary>
         /// Identifier of the client requesting the token. 
         /// The client ID must be registered at https://apps.dev.microsoft.com.
         /// </summary>
         /// <remarks>
-        /// This ID is unique to this application and should be replaced for yours.
+        /// This ID is unique to this application and should be replaced wth the ADAL Application ID.
         /// </remarks>
-        public const string _clientID = "<your_aad_client_id>";
+        private const string _clientID = _placeholderClientID; //TODO - Replace with your value.
 
         /// <summary>
         /// Address to return to upon receiving a response from the authority.
         /// </summary>
-        public const string _redirectURI = "<your_redirect_uri>";
+        /// <remarks>
+        /// This URI is configurable while registering this application with ADAL and should be replaced with the ADAL Redirect URI.
+        /// </remarks>
+        private const string _redirectURI = _placeholderRedirectURI; //TODO - Replace with your value.
 
         /// <summary>
         /// Identifier of the target resource that is the recipient of the requested token.
         /// </summary>
-        public const string _resourceID = "https://graph.microsoft.com/";
+        private const string _resourceID = "https://graph.microsoft.com/";
 
         private string _cachedResourceID;
         private string _cachedUPN;
@@ -134,6 +145,23 @@ namespace TaskrForms.Droid.Authentication
         /// <returns>The authentication result.</returns>
         public async Task<AuthenticationResult> Authenticate(PromptBehavior behavior)
         {
+            // Check initial authentication values.
+            if (_clientID.Equals(_placeholderClientID) || _redirectURI.Equals(_placeholderRedirectURI))
+            {
+                Toast.MakeText(Android.App.Application.Context, "Please update the authentication values for your application.", ToastLength.Long).Show();
+                Log.Info(_logTagAuth, "Authentication cancelled. Authentication values need to be updated with user provided values." +
+                    " Client ID = " + _clientID + " Redirect URI = " + _redirectURI);
+                return null;
+            }
+
+            if (!Uri.IsWellFormedUriString(_redirectURI, UriKind.RelativeOrAbsolute))
+            {
+                Toast.MakeText(Android.App.Application.Context, "Please correct the redirect URI for your application.", ToastLength.Long).Show();
+                Log.Info(_logTagAuth, "Authentication cancelled. Redirect URI needs to be corrected with a well-formed value." +
+                    " Redirect URI = " + _redirectURI);
+                return null;
+            }
+
             AuthenticationResult result = null;
 
             // Register the callback to capture ADAL logs.

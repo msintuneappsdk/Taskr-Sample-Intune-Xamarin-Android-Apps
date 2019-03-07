@@ -9,9 +9,10 @@ Taskr allows users to keep a list of to-do items, or tasks. Users can view their
 - Once a tenant is acquired the Intune subscription will need to be properly configured to target the user and the application. Follow the set up steps found [here](https://docs.microsoft.com/en-us/intune/setup-steps).
 ### Configuring App for ADAL Authentication
 - Perform the app registration and configuration steps found [here](https://github.com/Azure-Samples/active-directory-android#register--configure-your-app). 
-  - The purpose of registering with ADAL is to acquire a client ID and redirect URI for your application. Once you have registered your app, replace the client ID and the redirect URI.
-  - For the Xamarin.Android app, replace `_clientID` in `TaskrAndroid\Authentication\AuthManager.cs` and `clientId` in `TaskrAndroid\Properties\AndroidManifest.xml` with the acquired ID.
-  - For the Xamarin.Forms app, replace `ClientID ` in `TaskrForms\TaskrForms\App.xaml.cs` and `clientID` in `TaskrForms.Android\Properties\AndroidManifest.xml` with the acquired ID.
+  - The purpose of registering with ADAL is to acquire a client ID and redirect URI for your application. 
+  - Once you have registered your app, replace the client ID and the redirect URI.
+    - For the Xamarin.Android app, replace `_clientID` and `_redirectURI` in `TaskrAndroid\Authentication\AuthManager.cs` and `clientId` in `TaskrAndroid\Properties\AndroidManifest.xml`.
+    - For the Xamarin.Forms app, replace `_clientID` and `_redirectURI` in `TaskrForms.Android\Authentication\Authenticator.cs` and `clientID` in `TaskrForms.Android\Properties\AndroidManifest.xml`.
 ### Grant App Permission to MAM Service
 - You will need to [grant your app permissions](https://docs.microsoft.com/en-us/intune/app-sdk-get-started#give-your-app-access-to-the-intune-app-protection-service-optional) to the Intune Mobile Application Management (MAM) service.
 
