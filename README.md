@@ -67,4 +67,4 @@ The following policies are automatically managed by the SDK without explicit app
 - `Receivers\EnrollmentNotificationReceiver.cs` and `Receivers\ToastNotificationReceiver.cs` receive and handle notifications sent by MAM.
 
 ## Troubleshooting
-- When deploying the app in Debug mode, ensure the `Debuggable=false` attribute is added to the `Application` class. Otherwise, you may experience application crashes while attempting to debug.
+- When deploying either app in Debug mode, ensure the `Debuggable=false` attribute is added to the `Application` class and that the `android:debuggable="true"` flag has not been manually set in the manifest. Otherwise, you may experience application crashes while attempting to debug. This is a necessary workaround due to an issue in the [Microsoft Intune App SDK Xamarin Bindings](https://github.com/msintuneappsdk/intune-app-sdk-xamarin).
