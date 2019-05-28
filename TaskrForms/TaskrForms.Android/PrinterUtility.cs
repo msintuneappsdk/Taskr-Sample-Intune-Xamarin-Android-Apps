@@ -6,6 +6,7 @@ using Android.Content;
 using Android.Print;
 using Android.Webkit;
 using Android.Widget;
+using Microsoft.Intune.Mam.Client.Print;
 using System;
 using TaskrForms.Droid;
 
@@ -81,7 +82,7 @@ namespace TaskrForms.Droid
             {
                 // Create the print job with the name and adapter
                 PrintDocumentAdapter printAdapter = webView.CreatePrintDocumentAdapter(Application.Context.GetString(Resource.String.print_name));
-                printManager.Print(Application.Context.GetString(Resource.String.print_name), printAdapter, null);
+                MAMPrintManagement.Print(printManager, Application.Context.GetString(Resource.String.print_name), printAdapter, null);
             }
             catch (Exception ex)
             {

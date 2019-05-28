@@ -1,3 +1,11 @@
+Version 1.3
+-------------
+* Update sample apps to target Android P.
+* Update MAM bindings and MAM Remapper NuGet packages to the latest release.
+* Update support libraries and Xamarin.Forms version.
+* Update code for MAM print policy enforcement.
+* Remove Resource.Designer.cs files from source control and add to git ignore.
+
 Version 1.2
 -------------
 * A known issue with the Xamarin bound MAM SDK would cause the application to crash when deployed in Debug mode. This change provides a workaround for that issue by adding an application attribute that enables the application to be debugged without it crashing.
