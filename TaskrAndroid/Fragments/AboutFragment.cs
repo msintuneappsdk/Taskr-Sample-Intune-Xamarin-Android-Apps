@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Android.OS;
+using Android.Support.V4.App;
 using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
@@ -11,16 +12,14 @@ using System.Collections.Generic;
 using System.Text;
 using TaskrAndroid.Authentication;
 
-using MAMFragment = Microsoft.Intune.Mam.Client.Support.V4.App.MAMFragment;
-
 /// <summary>
 /// A Fragment subclass that handles the creation of a view of the about screen.
 /// </summary>
 namespace TaskrAndroid.Fragments
 {
-    class AboutFragment : MAMFragment
+    class AboutFragment : Fragment
     {
-        public override View OnMAMCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.fragment_about, container, false);
 

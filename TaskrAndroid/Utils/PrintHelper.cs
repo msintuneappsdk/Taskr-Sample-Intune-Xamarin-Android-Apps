@@ -8,7 +8,6 @@ using Android.Content;
 using Android.Print;
 using Android.Webkit;
 using Android.Widget;
-using Microsoft.Intune.Mam.Client.Print;
 
 namespace TaskrAndroid.Utils
 {
@@ -80,7 +79,7 @@ namespace TaskrAndroid.Utils
                 string jobName = activity.GetString(Resource.String.print_name);
                 PrintDocumentAdapter printAdapter = webView.CreatePrintDocumentAdapter(jobName);
 
-                MAMPrintManagement.Print(printManager, jobName, printAdapter, null);
+                printManager.Print(jobName, printAdapter, null);
             }
             else
             {
