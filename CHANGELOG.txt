@@ -1,3 +1,9 @@
+Version 2.1
+-------------
+* Update MAM bindings and MAM Remapper NuGet packages to the latest release.
+* Resolve Forms remapping issue in latest versions of VS 2019.
+* Update to latest ADAL release.
+
 Version 2.0
 -------------
 * Update basic Android sample app to use the Remapper for MAM class, method, and system services replacements.
