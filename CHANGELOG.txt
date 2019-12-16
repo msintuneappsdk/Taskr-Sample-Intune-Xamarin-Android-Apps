@@ -1,3 +1,8 @@
+Version 2.2
+-------------
+* Update MAM bindings and MAM Remapper NuGet packages to the latest release.
+* Resolve Forms remapping issue in Forms versions 4.3+ with `FormsAppCompatActivity`.
+
 Version 2.1
 -------------
 * Update MAM bindings and MAM Remapper NuGet packages to the latest release.
