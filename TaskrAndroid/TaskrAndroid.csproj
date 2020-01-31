@@ -90,9 +90,6 @@
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
       <Version>5.2.5</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Intune.MAM.Remapper.Tasks">
-      <Version>0.1.4635.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.Intune.MAM.Xamarin.Android">
       <Version>3.0.4635.1</Version>
     </PackageReference>

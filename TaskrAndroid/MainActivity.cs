@@ -12,23 +12,23 @@ using Android.Views;
 
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Intune.Mam.Client.App;
+using Microsoft.Intune.Mam.Client.Support.V7.App;
 using Microsoft.Intune.Mam.Policy;
 using TaskrAndroid.Fragments;
 using TaskrAndroid.Authentication;
 using Android.Support.V4.View;
-using Android.Support.V7.App;
 
 namespace TaskrAndroid
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
-    public partial class MainActivity : AppCompatActivity,
+    public partial class MainActivity : MAMAppCompatActivity,
         NavigationView.IOnNavigationItemSelectedListener, IAuthListener
     {
         private Handler handler;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        public override void OnMAMCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
+            base.OnMAMCreate(savedInstanceState);
 
             // If the app has already started, the user has signed in, and the activity was just
             // restarted, skip the rest of this initialization and open the main UI
@@ -48,9 +48,9 @@ namespace TaskrAndroid
         /// <summary>
         /// Required override method for ADAL integration
         /// </summary>
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        public override void OnMAMActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
-            base.OnActivityResult(requestCode, resultCode, data);
+            base.OnMAMActivityResult(requestCode, resultCode, data);
             AuthenticationAgentContinuationHelper.SetAuthenticationAgentContinuationEventArgs(requestCode, resultCode, data);
         }
 
@@ -134,7 +134,7 @@ namespace TaskrAndroid
         /// <param name="id"> the id of the fragment that should be displayed</param>
         private bool ChangeNavigationView(int id)
         {
-            Android.Support.V4.App.Fragment frag = null;
+            Microsoft.Intune.Mam.Client.Support.V4.App.MAMFragment frag = null;
 
             switch (id)
             {
@@ -190,9 +190,9 @@ namespace TaskrAndroid
             }
         }
 
-        protected override void OnSaveInstanceState(Bundle outState)
+        public override void OnMAMSaveInstanceState(Bundle outState)
         {
-            base.OnSaveInstanceState(outState);
+            base.OnMAMSaveInstanceState(outState);
             AuthManager.OnSaveInstanceState(outState);
         }
     }

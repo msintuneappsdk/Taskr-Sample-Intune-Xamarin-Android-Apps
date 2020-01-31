@@ -3,19 +3,19 @@
 
 using Android.Content;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using Microsoft.Intune.Mam.Client.Support.V4.App;
 
 namespace TaskrAndroid.Fragments
 {
     /// <summary>
     /// A Fragment subclass that handles the creation of a view of the submit screen.
     /// </summary>
-    class SubmitFragment : Fragment
+    class SubmitFragment : MAMFragment
     {
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override View OnMAMCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View rootView = inflater.Inflate(Resource.Layout.fragment_submit, container, false);
             if (Activity == null)

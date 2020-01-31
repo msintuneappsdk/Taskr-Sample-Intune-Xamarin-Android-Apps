@@ -25,12 +25,12 @@ namespace TaskrAndroid
 #else
     [Application]
 #endif
-    class TaskrApplication : Application
+    class TaskrApplication : MAMApplication
     {
         public TaskrApplication(IntPtr handle, Android.Runtime.JniHandleOwnership transfer)
             : base(handle, transfer) { }
 
-        public override void OnCreate()
+        public override void OnMAMCreate()
         {
             // Register the MAMAuthenticationCallback as soon as possible.
             // This will handle acquiring the necessary access token for MAM.
@@ -48,7 +48,7 @@ namespace TaskrAndroid
             registry.RegisterReceiver(new EnrollmentNotificationReceiver(this), MAMNotificationType.MamEnrollmentResult);
             registry.RegisterReceiver(new WipeNotificationReceiver(this), MAMNotificationType.WipeUserData);
 
-            base.OnCreate();
+            base.OnMAMCreate();
         }
 
         public override void OnTerminate()

@@ -9,7 +9,8 @@ namespace TaskrAndroid.Authentication
 {
     /// <summary>
     /// Required by the MAM SDK. A token may be needed very early in the app lifecycle so the ideal
-    /// place to register the callback is in the OnCreate() method of the app's Application class.
+    /// place to register the callback is in the OnMAMCreate() method of the app's implementation
+    /// of IMAMApplication.
     /// See https://docs.microsoft.com/en-us/intune/app-sdk-android#account-authentication
     /// </summary>
     class MAMWEAuthCallback : Java.Lang.Object, IMAMServiceAuthenticationCallback

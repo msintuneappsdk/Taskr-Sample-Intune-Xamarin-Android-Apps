@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
 using Microsoft.Intune.Mam.Client.Identity;
+using Microsoft.Intune.Mam.Client.Support.V4.App;
 using Microsoft.Intune.Mam.Policy;
 using TaskrAndroid.Authentication;
 using TaskrAndroid.Utils;
@@ -15,9 +15,9 @@ namespace TaskrAndroid.Fragments
     /// <summary>
     /// A Fragment subclass that handles the creation of a view of the tasks screen
     /// </summary>
-    class TasksFragment : Fragment
+    class TasksFragment : MAMFragment
     {
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public override View OnMAMCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View rootView = inflater.Inflate(Resource.Layout.fragment_tasks, container, false);
 
