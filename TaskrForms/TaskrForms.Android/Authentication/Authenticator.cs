@@ -30,7 +30,7 @@ namespace TaskrForms.Droid.Authentication
         private const string _placeholderRedirectURI = "<placeholder_redirect_uri>";
 
         /// <summary>
-        /// The authority for the ADAL AuthenticationContext. Sign in will use this URL.
+        /// The authority for the MSAL PublicClientApplication. Sign in will use this URL.
         /// </summary>
         private const string _authority = "https://login.microsoftonline.com/common";
 
@@ -39,7 +39,7 @@ namespace TaskrForms.Droid.Authentication
         /// The client ID must be registered at https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredApps.
         /// </summary>
         /// <remarks>
-        /// This ID is unique to this application and should be replaced wth the ADAL Application ID.
+        /// This ID is unique to this application and should be replaced wth the MSAL Application ID.
         /// </remarks>
         private const string _clientID = _placeholderClientID; //TODO - Replace with your value.
         
@@ -47,7 +47,7 @@ namespace TaskrForms.Droid.Authentication
         /// Address to return to upon receiving a response from the authority.
         /// </summary>
         /// <remarks>
-        /// This URI is configurable while registering this application with ADAL and should be replaced with the ADAL Redirect URI.
+        /// This URI is configurable while registering this application with MSAL and should be replaced with the MSAL Redirect URI.
         /// </remarks>
         private const string _redirectURI = _placeholderRedirectURI; //TODO - Replace with your value.
         
@@ -60,35 +60,14 @@ namespace TaskrForms.Droid.Authentication
         private string _cachedUPN;
         private string _cachedAADID; 
 
-        private const string _logTagADAL = "Taskr ADAL Logs";
+        private const string _logTagMSAL = "Taskr MSAL Logs";
         private const string _logTagAuth = "Taskr Auth Logs";
 
         private static Authenticator instance;
-        //private static AuthenticationContext authContext;
         private static IPublicClientApplication pca;
 
-        ///// <summary>
-        ///// The current Authentication Context.
-        ///// </summary>
-        //private static AuthenticationContext AuthContext
-        //{
-        //    get
-        //    {
-        //        if (authContext == null)
-        //        {
-        //            authContext = new AuthenticationContext(_authority);
-        //            if (authContext.TokenCache.ReadItems().Count() > 0)
-        //            {
-        //                authContext = new AuthenticationContext(
-        //                    AuthContext.TokenCache.ReadItems().First().Authority);
-        //            }
-        //        }
-        //        return authContext;
-        //    }
-        //}
-
         /// <summary>
-        /// The current Authentication Context.
+        /// The current PublicClientApplication.
         /// </summary>
         private static IPublicClientApplication PCA
         {
@@ -98,7 +77,8 @@ namespace TaskrForms.Droid.Authentication
                 {
                     pca = PublicClientApplicationBuilder
                         .Create(_clientID)
-                        .WithLogging(ADALLog, LogLevel.Info, true)
+                        .WithAuthority(_authority)
+                        .WithLogging(MSALLog, LogLevel.Info, true)
                         .WithBroker()
                         .WithRedirectUri(_redirectURI)
                         .Build();
@@ -108,32 +88,32 @@ namespace TaskrForms.Droid.Authentication
         }
 
         /// <summary>
-        /// Callback for ADAL logging.
+        /// Callback for MSAL logging.
         /// </summary>
         /// <remarks>
-        /// By default this app has verbose logging for ADAL for troubleshooting purposes.
+        /// By default this app has verbose logging for MSAL for troubleshooting purposes.
         /// </remarks>
         /// <param name="level">The log level.</param>
         /// <param name="message">The log message.</param>
         /// <param name="containsPii">True if the log contains PII information, false if otherwise.</param>
-        private static void ADALLog(LogLevel level, string message, bool containsPii)
+        private static void MSALLog(LogLevel level, string message, bool containsPii)
         {
             switch (level)
             {
                 case LogLevel.Info:
-                    Log.Info(_logTagADAL, message);
+                    Log.Info(_logTagMSAL, message);
                     break;
                 case LogLevel.Warning:
-                    Log.Warn(_logTagADAL, message);
+                    Log.Warn(_logTagMSAL, message);
                     break;
                 case LogLevel.Error:
-                    Log.Error(_logTagADAL, message);
+                    Log.Error(_logTagMSAL, message);
                     break;
                 case LogLevel.Verbose:
-                    Log.Verbose(_logTagADAL, message);
+                    Log.Verbose(_logTagMSAL, message);
                     break;
                 default:
-                    Log.Debug(_logTagADAL, message);
+                    Log.Debug(_logTagMSAL, message);
                     break;
             }
         }
@@ -185,10 +165,6 @@ namespace TaskrForms.Droid.Authentication
 
             AuthenticationResult result;
 
-            // Register the callback to capture ADAL logs.
-            //LoggerCallbackHandler.LogCallback = ADALLog;
-            //LoggerCallbackHandler.PiiLoggingEnabled = true;
-
             // Attempt to sign the user in silently.
             result = await SignInSilent(_scopes);
 
@@ -208,7 +184,7 @@ namespace TaskrForms.Droid.Authentication
 
                 // Register the account for MAM
                 // See: https://docs.microsoft.com/en-us/intune/app-sdk-android#account-authentication
-                // This app requires ADAL authentication prior to MAM enrollment so we delay the registration
+                // This app requires MSAL authentication prior to MAM enrollment so we delay the registration
                 // until after the sign in flow.
                 IMAMEnrollmentManager mgr = MAMComponents.Get<IMAMEnrollmentManager>();
                 mgr.RegisterAccountForMAM(_cachedUPN, _cachedAADID, result.TenantId);
@@ -220,12 +196,11 @@ namespace TaskrForms.Droid.Authentication
         /// <summary>
         /// Attempt silent authentication through the broker.
         /// </summary>
-        /// <param name="resourceId"> The resource we're authenticating against to obtain a token </param>
-        /// <param name="aadId"> The AAD ID for the user, null if not known </param>
+        /// <param name="scopes"> The scopes we're authenticating against to obtain a token </param>
         /// <returns> The AuthenticationResult on succes, null otherwise</returns>
         public async Task<AuthenticationResult> SignInSilent(IEnumerable<string> scopes)
         {
-            AuthenticationResult result = null;
+            AuthenticationResult result;
             try
             {
                 Log.Info(_logTagAuth, "Attempting silent authentication.");
@@ -256,7 +231,6 @@ namespace TaskrForms.Droid.Authentication
         /// <summary>
         /// Attempt interactive authentication through the broker.
         /// </summary>
-        /// <param name="platformParams"> Additional paramaters for authentication.</param>
         /// <returns>The AuthenticationResult on succes, null otherwise.</returns>
         public async Task<AuthenticationResult> SignInWithPrompt(Activity activity)
         {
