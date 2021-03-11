@@ -23,7 +23,7 @@ namespace TaskrForms.Droid
         }
 
         /// <summary>
-        /// Required override method for ADAL integration
+        /// Required override method for MSAL integration
         /// </summary>
         protected override void OnMAMActivityResult(int requestCode, Result resultCode, Intent data)
         {

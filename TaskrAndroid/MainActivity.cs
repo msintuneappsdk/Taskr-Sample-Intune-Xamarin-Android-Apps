@@ -46,7 +46,7 @@ namespace TaskrAndroid
         }
 
         /// <summary>
-        /// Required override method for ADAL integration
+        /// Required override method for MSAL integration
         /// </summary>
         public override void OnMAMActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
@@ -79,7 +79,7 @@ namespace TaskrAndroid
 
             // Register the account for MAM
             // See: https://docs.microsoft.com/en-us/intune/app-sdk-android#account-authentication
-            // This app requires ADAL authentication prior to MAM enrollment so we delay the registration
+            // This app requires MSAL authentication prior to MAM enrollment so we delay the registration
             // until after the sign in flow.
             IMAMEnrollmentManager mgr = MAMComponents.Get<IMAMEnrollmentManager>();
             mgr.RegisterAccountForMAM(upn, aadId, tenantId);
