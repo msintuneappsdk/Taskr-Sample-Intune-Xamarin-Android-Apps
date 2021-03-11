@@ -5,7 +5,7 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 
 namespace TaskrForms.Droid
 {
@@ -28,7 +28,7 @@ namespace TaskrForms.Droid
         protected override void OnMAMActivityResult(int requestCode, Result resultCode, Intent data)
         {
             base.OnMAMActivityResult(requestCode, resultCode, data);
-            AuthenticationAgentContinuationHelper.SetAuthenticationAgentContinuationEventArgs(requestCode, resultCode, data);
+            AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(requestCode, resultCode, data);
         }
     }
 }
