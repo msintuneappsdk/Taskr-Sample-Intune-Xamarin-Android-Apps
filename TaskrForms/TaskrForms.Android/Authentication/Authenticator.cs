@@ -22,7 +22,7 @@ namespace TaskrForms.Droid.Authentication
     /// <summary>
     /// Manages authentication for the app.
     /// 
-    /// Deals with both ADAL and MAM, significantly.
+    /// Deals with both MSAL and MAM, significantly.
     /// </summary>
     class Authenticator : IAuthenticator
     {
@@ -41,18 +41,16 @@ namespace TaskrForms.Droid.Authentication
         /// <remarks>
         /// This ID is unique to this application and should be replaced wth the ADAL Application ID.
         /// </remarks>
-        //private const string _clientID = _placeholderClientID; //TODO - Replace with your value.
-        private const string _clientID = "7a199be5-67df-4212-a342-8f699758ad05";
-
+        private const string _clientID = _placeholderClientID; //TODO - Replace with your value.
+        
         /// <summary>
         /// Address to return to upon receiving a response from the authority.
         /// </summary>
         /// <remarks>
         /// This URI is configurable while registering this application with ADAL and should be replaced with the ADAL Redirect URI.
         /// </remarks>
-        //private const string _redirectURI = _placeholderRedirectURI; //TODO - Replace with your value.
-        private const string _redirectURI = "msauth://com.microsoft.intune.taskr.xamarin/9OKrINlT1PfxV82lFGnRE7spwmQ%3D"; 
-
+        private const string _redirectURI = _placeholderRedirectURI; //TODO - Replace with your value.
+        
         /// <summary>
         /// Identifier of the target resource that is the recipient of the requested token.
         /// </summary>
