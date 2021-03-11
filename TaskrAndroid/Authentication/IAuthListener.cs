@@ -12,7 +12,7 @@ namespace TaskrAndroid.Authentication
         /// <summary>
         /// Called when the authenticator successfully signs in.
         /// </summary>
-        void OnSignedIn(Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationResult result);
+        void OnSignedIn(Microsoft.Identity.Client.AuthenticationResult result);
 
         /// <summary>
         /// Called when the authenticator successfully signs out.

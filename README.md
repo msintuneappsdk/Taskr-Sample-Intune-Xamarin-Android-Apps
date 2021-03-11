@@ -69,3 +69,4 @@ The following policies are automatically managed by the SDK without explicit app
 
 ## Troubleshooting
 - When deploying either app in Debug mode, ensure the `Debuggable=false` attribute is added to the `Application` class and that the `android:debuggable="true"` flag has not been manually set in the manifest. Otherwise, you may experience application crashes while attempting to debug. This is a necessary workaround due to an issue in the [Microsoft Intune App SDK Xamarin Bindings](https://github.com/msintuneappsdk/intune-app-sdk-xamarin).
+- If the Xamarin Forms project displays only a blank page when running the application, try updating the `Linker proprties`under `Android Options` to linking `Sdk and User Assemblies` instead of `None`.

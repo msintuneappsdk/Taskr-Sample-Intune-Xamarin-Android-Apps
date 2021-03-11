@@ -10,7 +10,7 @@ using Android.Support.V4.Widget;
 using Android.Support.Design.Widget;
 using Android.Views;
 
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 using Microsoft.Intune.Mam.Client.App;
 using Microsoft.Intune.Mam.Client.Support.V7.App;
 using Microsoft.Intune.Mam.Policy;
@@ -51,7 +51,7 @@ namespace TaskrAndroid
         public override void OnMAMActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
             base.OnMAMActivityResult(requestCode, resultCode, data);
-            AuthenticationAgentContinuationHelper.SetAuthenticationAgentContinuationEventArgs(requestCode, resultCode, data);
+            AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(requestCode, resultCode, data);
         }
 
         private void OpenSignInView()
@@ -61,7 +61,8 @@ namespace TaskrAndroid
             View signInButton = FindViewById(Resource.Id.sign_in_button);
             signInButton.Click += (sender, e) =>
             {
-                handler.SendEmptyMessage((int)PromptBehavior.Always);
+                //handler.SendEmptyMessage((int)PromptBehavior.Always);
+                handler.SendEmptyMessage(0);
             };
         }
 
@@ -72,8 +73,8 @@ namespace TaskrAndroid
         /// <param name="result"> the AuthenticationResult containing a valid access token</param>
         public void OnSignedIn(AuthenticationResult result)
         {
-            string upn = result.UserInfo.DisplayableId;
-            string aadId = result.UserInfo.UniqueId;
+            string upn = result.Account.Username;
+            string aadId = result.Account.HomeAccountId.ObjectId;
             string tenantId = result.TenantId;
 
             // Register the account for MAM

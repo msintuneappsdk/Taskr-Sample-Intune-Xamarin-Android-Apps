@@ -178,7 +178,7 @@ namespace TaskrForms.Droid.Authentication
             if (result != null && result.AccessToken != null)
             {
                 _cachedUPN = result.Account.Username;
-                _cachedAADID = result.Account.HomeAccountId.Identifier;
+                _cachedAADID = result.Account.HomeAccountId.ObjectId;
 
                 Log.Info(_logTagAuth, "Authentication succeeded. UPN = " + _cachedUPN);
 

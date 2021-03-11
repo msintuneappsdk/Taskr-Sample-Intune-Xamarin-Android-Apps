@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
@@ -9,7 +10,7 @@ using Android.OS;
 using Android.Util;
 using Android.Widget;
 using Java.Lang;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 using Microsoft.Intune.Mam.Client.App;
 using Microsoft.Intune.Mam.Policy;
 
@@ -38,7 +39,7 @@ namespace TaskrAndroid.Authentication
         /// This ID is unique to this application and should be replaced wth the ADAL Application ID.
         /// </remarks>
         private const string _clientID = _placeholderClientID; //TODO - Replace with your value.
-
+        
         /// <summary>
         /// Address to return to upon receiving a response from the authority.
         /// </summary>
@@ -46,11 +47,11 @@ namespace TaskrAndroid.Authentication
         /// This URI is configurable while registering this application with ADAL and should be replaced with the ADAL Redirect URI.
         /// </remarks>
         private const string _redirectURI = _placeholderRedirectURI; //TODO - Replace with your value.
-
+        
         /// <summary>
         /// Identifier of the target resource that is the recipient of the requested token.
         /// </summary>
-        public const string _resourceID = "https://graph.microsoft.com/";
+        private string[] _scopes = { "https://graph.microsoft.com/User.Read" };
 
         private string _cachedResourceID;
         private string _cachedUPN;
@@ -60,7 +61,8 @@ namespace TaskrAndroid.Authentication
         private const string _logTagAuth = "Taskr Auth Logs";
 
         private static AuthManager instance;
-        private static AuthenticationContext authContext;
+        //private static AuthenticationContext authContext;
+        private static IPublicClientApplication pca;
 
         private const string SAVE_IS_AUTHED = "isAuthenticated";
         private static bool isAuthenticated;
@@ -73,20 +75,21 @@ namespace TaskrAndroid.Authentication
         /// <summary>
         /// The current Authentication Context.
         /// </summary>
-        private static AuthenticationContext AuthContext
+        private static IPublicClientApplication PCA
         {
             get
             {
-                if (authContext == null)
+                if (pca == null)
                 {
-                    authContext = new AuthenticationContext(_authority);
-                    if (authContext.TokenCache.ReadItems().Count() > 0)
-                    {
-                        authContext = new AuthenticationContext(
-                            AuthContext.TokenCache.ReadItems().First().Authority);
-                    }
+                    pca = PublicClientApplicationBuilder
+                        .Create(_clientID)
+                        .WithAuthority(_authority)
+                        .WithLogging(ADALLog, LogLevel.Info, true)
+                        .WithBroker()
+                        .WithRedirectUri(_redirectURI)
+                        .Build();
                 }
-                return authContext;
+                return pca;
             }
         }
 
@@ -103,7 +106,7 @@ namespace TaskrAndroid.Authentication
         {
             switch(level)
             {
-               case LogLevel.Information:
+               case LogLevel.Info:
                     Log.Info(_logTagADAL, message);
                     break;
                 case LogLevel.Warning:
@@ -147,9 +150,8 @@ namespace TaskrAndroid.Authentication
         /// Authenticates the user.
         /// </summary>
         /// <param name="activity">The calling activity.</param>
-        /// <param name="behavior">The ADAL prompt behavior.</param>
         /// <returns>The authentication result.</returns>
-        public async Task<AuthenticationResult> Authenticate(Activity activity, PromptBehavior behavior)
+        public async Task<AuthenticationResult> Authenticate(Activity activity)
         {
             // Check initial authentication values.
             if (_clientID.Equals(_placeholderClientID) || _redirectURI.Equals(_placeholderRedirectURI))
@@ -168,26 +170,22 @@ namespace TaskrAndroid.Authentication
                 return null;
             }
 
-            AuthenticationResult result = null;
-
-            // Register the callback to capture ADAL logs.
-            LoggerCallbackHandler.LogCallback = ADALLog;
-            LoggerCallbackHandler.PiiLoggingEnabled = true;
+            AuthenticationResult result;
 
             // Attempt to sign the user in silently.
-            result = await SignInSilent(_resourceID, null);
+            result = await SignInSilent(_scopes);
 
             // If the user cannot be signed in silently, prompt the user to manually sign in.
             if (result == null)
             {
-                result = await SignInWithPrompt(new PlatformParameters(activity, false, behavior));
+                result = await SignInWithPrompt(activity);
             }
 
             // If auth was successful, cache the values and log the success.
             if (result != null && result.AccessToken != null)
             {
-                _cachedUPN = result.UserInfo.DisplayableId;
-                _cachedAADID = result.UserInfo.UniqueId;
+                _cachedUPN = result.Account.Username;
+                _cachedAADID = result.Account.HomeAccountId.ObjectId;
 
                 Log.Info(_logTagAuth, "Authentication succeeded. UPN = " + _cachedUPN);
             }
@@ -201,26 +199,19 @@ namespace TaskrAndroid.Authentication
         /// <param name="resourceId"> The resource we're authenticating against to obtain a token </param>
         /// <param name="aadId"> The AAD ID for the user, null if not known </param>
         /// <returns> The AuthenticationResult on succes, null otherwise</returns>
-        public async Task<AuthenticationResult> SignInSilent(string resourceId, string aadId)
+        public async Task<AuthenticationResult> SignInSilent(IEnumerable<string> scopes)
         {
             AuthenticationResult result = null;
             try
             {
                 Log.Info(_logTagAuth, "Attempting silent authentication.");
-                if (aadId != null)
+                var currentAccounts = await PCA.GetAccountsAsync();
+                if (currentAccounts.Count() > 0)
                 {
-                    result = await AuthContext.AcquireTokenSilentAsync(
-                        resourceId,
-                        _clientID,
-                        new UserIdentifier(aadId, UserIdentifierType.RequiredDisplayableId));
-                }
-                else
-                {
-                    Log.Warn(_logTagAuth, "No AAD ID provided, continuing silent authentication attempt.");
-                    result = await AuthContext.AcquireTokenSilentAsync(resourceId, _clientID);
+                    result = await PCA.AcquireTokenSilent(scopes, currentAccounts.FirstOrDefault()).ExecuteAsync();
                 }
             }
-            catch (AdalSilentTokenAcquisitionException e)
+            catch (MsalUiRequiredException e)
             {
                 // Expected if there is not token in the cache.
                 Log.Warn(_logTagAuth, "Encountered error when attempting to silently authenticate. " +
@@ -237,23 +228,22 @@ namespace TaskrAndroid.Authentication
         /// </summary>
         /// <param name="platformParams"> Additional paramaters for authentication.</param>
         /// <returns>The AuthenticationResult on succes, null otherwise.</returns>
-        public async Task<AuthenticationResult> SignInWithPrompt(PlatformParameters platformParams)
+        public async Task<AuthenticationResult> SignInWithPrompt(Activity activity)
         {
             AuthenticationResult result = null;
             try
             {
                 Log.Info(_logTagAuth, "Attempting interactive authentication");
-                result = await AuthContext.AcquireTokenAsync(
-                    _resourceID,
-                    _clientID,
-                    new Uri(_redirectURI),
-                    platformParams);
+                result = await PCA.AcquireTokenInteractive(_scopes)
+                    .WithParentActivityOrWindow(activity)
+                    .WithUseEmbeddedWebView(true)
+                    .ExecuteAsync();
             }
-            catch (AdalException e)
+            catch (MsalException e)
             {
                 string msg = Resource.String.err_auth + e.Message;
                 Log.Error(_logTagAuth, Throwable.FromException(e), msg);
-                Toast.MakeText(platformParams.CallerActivity, msg, ToastLength.Long).Show();
+                Toast.MakeText(activity, msg, ToastLength.Long).Show();
                 return null;
             }
 
@@ -266,10 +256,14 @@ namespace TaskrAndroid.Authentication
         /// Signs the user out of the application and unenrolls from MAM.
         /// </summary>
         /// <param name="listener"></param>
-        public void SignOut(IAuthListener listener)
+        public async void SignOut(IAuthListener listener)
         {
             // Clear the app's token cache so the user will be prompted to sign in again.
-            authContext.TokenCache.Clear();
+            var currentAccounts = await PCA.GetAccountsAsync();
+            if (currentAccounts.Count() > 0)
+            {
+                await PCA.RemoveAsync(currentAccounts.FirstOrDefault());
+            }
 
             string user = User;
             if (user != null)
@@ -320,12 +314,13 @@ namespace TaskrAndroid.Authentication
 
             try
             {
-                result = await AuthContext.AcquireTokenSilentAsync(
-                    resourceId,
-                    _clientID,
-                    new UserIdentifier(aadId, UserIdentifierType.UniqueId));
+                var currentAccounts = await PCA.GetAccountsAsync();
+                if (currentAccounts.Count() > 0)
+                {
+                    result = await PCA.AcquireTokenSilent(new string[] { resourceId + "/.default" }, currentAccounts.FirstOrDefault().Username).ExecuteAsync();
+                }
             }
-            catch (AdalSilentTokenAcquisitionException e)
+            catch (MsalServiceException e)
             {
                 // Expected if there is not token in the cache.
                 Log.Warn(_logTagAuth, "Encountered error when attempting to silently authenticate. " +
