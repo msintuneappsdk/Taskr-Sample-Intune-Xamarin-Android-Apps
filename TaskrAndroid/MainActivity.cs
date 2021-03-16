@@ -61,7 +61,6 @@ namespace TaskrAndroid
             View signInButton = FindViewById(Resource.Id.sign_in_button);
             signInButton.Click += (sender, e) =>
             {
-                //handler.SendEmptyMessage((int)PromptBehavior.Always);
                 handler.SendEmptyMessage(0);
             };
         }
