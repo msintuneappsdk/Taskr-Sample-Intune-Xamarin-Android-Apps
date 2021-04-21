@@ -32,7 +32,7 @@ namespace TaskrForms.Droid.Authentication
         /// <summary>
         /// The authority for the MSAL PublicClientApplication. Sign in will use this URL.
         /// </summary>
-        private const string _authority = "https://login.microsoftonline.com/common";
+        private const string _authority = "https://login.microsoftonline.com/organizations";
 
         /// <summary>
         /// Identifier of the client requesting the token. 
@@ -316,7 +316,7 @@ namespace TaskrForms.Droid.Authentication
                 var currentAccounts = await PCA.GetAccountsAsync();
                 if (currentAccounts.Count() > 0)
                 {
-                    result = await PCA.AcquireTokenSilent(new string[] { resourceId + "/.default" } , currentAccounts.FirstOrDefault().Username).ExecuteAsync();
+                    result = await PCA.AcquireTokenSilent(new string[] { resourceId + "/.default" } , currentAccounts.FirstOrDefault()).ExecuteAsync();
                 }
             }
             catch (MsalServiceException e)
