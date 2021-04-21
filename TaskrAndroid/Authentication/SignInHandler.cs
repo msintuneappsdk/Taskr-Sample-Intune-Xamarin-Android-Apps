@@ -3,7 +3,7 @@
 
 using Android.App;
 using Android.OS;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 
 namespace TaskrAndroid.Authentication
 {
@@ -26,8 +26,7 @@ namespace TaskrAndroid.Authentication
 
         public async override void HandleMessage(Message msg)
         {
-            PromptBehavior promptBehavior = (PromptBehavior)msg.What;
-            AuthenticationResult result = await manager.Authenticate(activity, promptBehavior);
+            AuthenticationResult result = await manager.Authenticate(activity);
 
             // If we were able to get an access token, return to the main view
             if (result != null && result.AccessToken != null)

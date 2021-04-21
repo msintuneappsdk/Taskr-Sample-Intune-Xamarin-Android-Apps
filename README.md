@@ -7,9 +7,10 @@ Taskr allows users to keep a list of to-do items, or tasks. Users can view their
 ### Configuring an Intune Subscription
 - A tenant is necessary for the configuration of an Intune subscription. A free trial is sufficient for this demo and can be registered for at [Microsoft's demo site](https://demos.microsoft.com).
 - Once a tenant is acquired the Intune subscription will need to be properly configured to target the user and the application. Follow the set up steps found [here](https://docs.microsoft.com/en-us/intune/setup-steps).
-### Configuring App for ADAL Authentication
-- Perform the app registration and configuration steps found [here](https://github.com/Azure-Samples/active-directory-android#register--configure-your-app). 
-  - The purpose of registering with ADAL is to acquire a client ID and redirect URI for your application. 
+### Configuring App for MSAL Authentication
+- Perform the app registration and configuration steps found [here](https://github.com/azure-samples/ms-identity-android-native#register-your-app). 
+  - The purpose of registering with MSAL is to acquire a client ID and redirect URI for your application. 
+  - For information about brokered authentication for Android, check the document [here](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-net-use-brokers-with-xamarin-apps#brokered-authentication-for-android).
   - Once you have registered your app, replace the client ID and the redirect URI.
     - For the Xamarin.Android app, replace `_clientID` and `_redirectURI` in `TaskrAndroid\Authentication\AuthManager.cs` and `clientId` in `TaskrAndroid\Properties\AndroidManifest.xml`.
     - For the Xamarin.Forms app, replace `_clientID` and `_redirectURI` in `TaskrForms.Android\Authentication\Authenticator.cs` and `clientID` in `TaskrForms.Android\Properties\AndroidManifest.xml`.
@@ -19,7 +20,7 @@ Taskr allows users to keep a list of to-do items, or tasks. Users can view their
 ## Highlighted SDK Features
 This project demonstrates proper integration with the MAM SDK and the [MAM-WE service](https://docs.microsoft.com/en-us/intune/app-sdk-android#app-protection-policy-without-device-enrollment). However, it does not show how to properly handle [multi-identity](https://docs.microsoft.com/en-us/intune/app-sdk-android#multi-identity-optional) protection. If your application needs to be multi-identity aware please refer to the [implementation documentation](https://docs.microsoft.com/en-us/intune/app-sdk-android#enabling-multi-identity).
 
-__! NOTE__ For policy to be applied to the application, the user will need to sign in and authenticate with ADAL. 
+__! NOTE__ For policy to be applied to the application, the user will need to sign in and authenticate with MSAL. 
 
 ### Actively Managed
 The following policies require explicit app involvement in order to be properly enforced. 
@@ -50,7 +51,7 @@ The following policies are automatically managed by the SDK without explicit app
 - `AndroidManifest.xml` requests the necessary permissions and sets up the MAM SDK's backup manager.
 - `MainActivity.cs` contains the high-level flow for authentication & account registration.
 - `TaskrApplication.cs` is the required Application class that inherits from `MAMApplication` and registers notification receivers.
-- `Authentication\AuthManager.cs` contains the bulk of the ADAL authentication logic.
+- `Authentication\AuthManager.cs` contains the bulk of the MSAL authentication logic.
 - `Authentication\MAMWEAuthCallback.cs` is the required callback for MAM account registration.
 - `Fragments\TasksFragment.cs` explicitly checks MAM policies to see if saving files to a user's device is allowed.
 - `Fragments\AboutFragment.cs` attempts to retrieve and display the user's Application Configuration JSON object.
@@ -60,7 +61,7 @@ The following policies are automatically managed by the SDK without explicit app
 - `AndroidManifest.xml` requests the necessary permissions and sets up the MAM SDK's backup manager.
 - `MainActivity.cs` contains the high-level flow for authentication & account registration.
 - `TaskrApp.cs` is the required Application class that inherits from `MAMApplication` and registers notification receivers.
-- `Authentication\Authenticator.cs` contains the bulk of the ADAL authentication logic.
+- `Authentication\Authenticator.cs` contains the bulk of the MSAL authentication logic.
 - `Authentication\MAMWEAuthCallback.cs` is the required callback for MAM account registration.
 - `SaveUtility.cs` explicitly checks MAM policies to see if saving files to a user's device is allowed.
 - `ConfigUtility.cs` attempts to retrieve and display the user's Application Configuration JSON object.
@@ -68,3 +69,4 @@ The following policies are automatically managed by the SDK without explicit app
 
 ## Troubleshooting
 - When deploying either app in Debug mode, ensure the `Debuggable=false` attribute is added to the `Application` class and that the `android:debuggable="true"` flag has not been manually set in the manifest. Otherwise, you may experience application crashes while attempting to debug. This is a necessary workaround due to an issue in the [Microsoft Intune App SDK Xamarin Bindings](https://github.com/msintuneappsdk/intune-app-sdk-xamarin).
+- If the Xamarin Forms project displays only a blank page when running the application, try updating the "Linker properties" under "Android Options" to linking "Sdk and User Assemblies" instead of "None".

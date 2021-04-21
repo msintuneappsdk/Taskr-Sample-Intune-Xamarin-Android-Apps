@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 using System.Threading.Tasks;
 
 namespace TaskrForms.Views
@@ -14,9 +14,8 @@ namespace TaskrForms.Views
         /// <summary>
         /// Authenticate by signing in the user and enrolling the user's account with MAM.
         /// </summary>
-        /// <param name="behavior">The behavior for the AquireToken method.</param>
         /// <returns></returns>
-        Task<AuthenticationResult> Authenticate(PromptBehavior behavior);
+        Task<AuthenticationResult> Authenticate();
 
         /// <summary>
         /// Sign the user out and unenroll the user's account from MAM.
